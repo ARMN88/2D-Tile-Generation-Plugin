@@ -4,7 +4,7 @@ import math
 import random
 
 # Variables
-roomSize = 10
+roomSize = 5
 whiteSpace = 4
 cells = []
 collections = None
@@ -124,14 +124,19 @@ def waveFunctionCollapseGenerator():
   for x in range(roomSize):
     cells.append([])
     for y in range(roomSize):
+      # create cell position
+      cellPos = {
+        "x": (x-roomSize/2)*Cell.size,
+        "y": (y-roomSize/2)*Cell.size
+      }
       # make avaliable list of all possible tiles
       avaliable = list(range(len(Cell.tiles)))
       removedCells = list(range(len(Cell.tiles)))
       # get neighbor cells
-      nearestCells = getNearestCells(x*Cell.size, y*Cell.size)
+      nearestCells = getNearestCells(cellPos["x"], cellPos["y"])
       for nearCell in nearestCells:
         # get direction of neighbor
-        dir = getDirection(nearCell.x, nearCell.y, x*Cell.size, y*Cell.size)
+        dir = getDirection(nearCell.x, nearCell.y, cellPos["x"], cellPos["y"])
         # remove numbers that are not in the neighbor list
         for num in avaliable:
           if not (num in nearCell.neighborLists[dir]):
@@ -141,8 +146,30 @@ def waveFunctionCollapseGenerator():
       if 0 in avaliable:
         for _ in range(whiteSpace):
           avaliable.append(0)
-      cells[x].append(Cell(x*Cell.size, y*Cell.size, random.choice(avaliable)))
+      cells[x].append(Cell(cellPos["x"], cellPos["y"], random.choice(avaliable)))
       cells[x][y].draw()
-
 waveFunctionCollapseGenerator()
-#randomGenerator()
+class SimpleOperator(bpy.types.Operator):
+    """Tooltip"""
+    bl_idname = "object.wave_function_collapse"
+    bl_label = "Wave Function Collapse"
+
+    def execute(self, context):
+        waveFunctionCollapseGenerator()
+        return {'FINISHED'}
+
+def menu_func(self, context):
+    self.layout.operator(SimpleOperator.bl_idname, text=SimpleOperator.bl_label)
+
+# Register and add to the "object" menu (required to also use F3 search "Simple Object Operator" for quick access)
+def register():
+    bpy.utils.register_class(SimpleOperator)
+    bpy.types.VIEW3D_MT_object.append(menu_func)
+
+
+def unregister():
+    bpy.utils.unregister_class(SimpleOperator)
+    bpy.types.VIEW3D_MT_object.remove(menu_func)
+    
+if __name__ == "__main__":
+    register()
