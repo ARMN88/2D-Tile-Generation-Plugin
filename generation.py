@@ -1,28 +1,24 @@
+"""
+- clean code
+- turn to addon
+"""
+
+bl_info = {
+    "name": "Tile Generation",
+    "blender": (3, 1, 2),
+    "category": "Object",
+}
+
 # Importing the library
 import bpy
 import math
 import random
+from bpy.props import *
 
 # Variables
-roomSize = 5
-whiteSpace = 4
 cells = []
-collections = None
+collection = None
 
-if "Tiles" in bpy.data.collections:
-    collection = bpy.data.collections["Tiles"]
-    for object in bpy.data.collections["Tiles"].objects:
-        object.select_set(True)
-    bpy.ops.object.delete()
-else:
-    collection = bpy.data.collections.new("Tiles")
-    bpy.context.scene.collection.children.link(collection)
-
-blenderObjects = []
-
-for i in range(11):
-    blenderObjects.append(bpy.data.collections["Assets"].objects["Tile."+str(i)])
-bpy.context.view_layer.objects.active = blenderObjects[4]
 # Cell Class
 class Cell:
   def __init__(self, x, y, tileNum):
@@ -53,15 +49,15 @@ class Cell:
       
   def draw(self):
     self.mesh = bpy.data.objects.new("Tile" + str(self.tileNum), blenderObjects[self.tileNum].data)
-    collection.objects.link(self.mesh)
+    bpy.data.collections["Tiles"].objects.link(self.mesh)
     self.mesh.location = (self.x, self.y, 0)
   size = 2
   tiles = [
     {"posX": 0, "negX": 0, "posY": 0, "negY": 0}, # 0
-    {"posX": 0, "negX": 0, "posY": 1, "negY": 0}, # 1
-    {"posX": 1, "negX": 0, "posY": 0, "negY": 0}, # 2
-    {"posX": 0, "negX": 0, "posY": 0, "negY": 1}, # 3
-    {"posX": 0, "negX": 1, "posY": 0, "negY": 0}, # 4
+    {"posX": 0, "negX": 1, "posY": 0, "negY": 0}, # 1
+    {"posX": 0, "negX": 0, "posY": 1, "negY": 0}, # 2
+    {"posX": 1, "negX": 0, "posY": 0, "negY": 0}, # 3
+    {"posX": 0, "negX": 0, "posY": 0, "negY": 1}, # 4
     {"posX": 1, "negX": 1, "posY": 0, "negY": 0}, # 5
     {"posX": 0, "negX": 0, "posY": 1, "negY": 1}, # 6
     {"posX": 0, "negX": 1, "posY": 1, "negY": 0}, # 7
@@ -107,17 +103,33 @@ def getDirection(x1, y1, x2, y2):
       return "negX"
   return None
   
-def randomGenerator():
+def randomGenerator(roomSize, whiteSpace):
+  if "Tiles" not in bpy.data.collections:
+    collection = bpy.data.collections.new("Tiles")
+    bpy.context.scene.collection.children.link(collection)
   global cells
   cells = []
   for x in range(roomSize):
     cells.append([])
     for y in range(roomSize):
-      cells[x].append(Cell(x*Cell.size, y*Cell.size, random.randint(0, len(Cell.tiles)-1)))
+      # create cell position
+      cellPos = {
+        "x": ((x-roomSize/2)*Cell.size)+Cell.size/2,
+        "y": ((y-roomSize/2)*Cell.size)+Cell.size/2
+      }
+      # pick random cell
+      avaliable = list(range(len(Cell.tiles)))
+      for _ in range(whiteSpace):
+          avaliable.append(0)
+      # add cell
+      cells[x].append(Cell(cellPos["x"], cellPos["y"], random.choice(avaliable)))
       cells[x][y].draw()
 
 # wave function collapse
-def waveFunctionCollapseGenerator():
+def waveFunctionCollapseGenerator(roomSize, whiteSpace):
+  if "Tiles" not in bpy.data.collections:
+    collection = bpy.data.collections.new("Tiles")
+    bpy.context.scene.collection.children.link(collection)
   global cells
   cells = []
   # create cells
@@ -126,8 +138,8 @@ def waveFunctionCollapseGenerator():
     for y in range(roomSize):
       # create cell position
       cellPos = {
-        "x": (x-roomSize/2)*Cell.size,
-        "y": (y-roomSize/2)*Cell.size
+        "x": ((x-roomSize/2)*Cell.size)+Cell.size/2,
+        "y": ((y-roomSize/2)*Cell.size)+Cell.size/2
       }
       # make avaliable list of all possible tiles
       avaliable = list(range(len(Cell.tiles)))
@@ -148,28 +160,85 @@ def waveFunctionCollapseGenerator():
           avaliable.append(0)
       cells[x].append(Cell(cellPos["x"], cellPos["y"], random.choice(avaliable)))
       cells[x][y].draw()
-waveFunctionCollapseGenerator()
-class SimpleOperator(bpy.types.Operator):
+
+# Wave Function Collapse #
+class WaveFunctionCollapse(bpy.types.Operator):
     """Tooltip"""
-    bl_idname = "object.wave_function_collapse"
-    bl_label = "Wave Function Collapse"
+    bl_idname = "scene.wave_function_collapse"
+    bl_label = "Wave Function Collapse Generator"
+    bl_options = {"REGISTER", "UNDO"}
+    
+    # try hard min and hard max, or soft
+    size : IntProperty(
+      name = "Room Size",
+      description = "Room dimensions",
+      default = 6,
+      min = 1
+    )
+
+    space : IntProperty(
+      name = "Whitespace",
+      description = "Amount of open area.",
+      default = 1,
+      min = 0,
+      max = 15
+    )
 
     def execute(self, context):
-        waveFunctionCollapseGenerator()
-        return {'FINISHED'}
+      waveFunctionCollapseGenerator(self.size, self.space)
+      return {'FINISHED'}
 
-def menu_func(self, context):
-    self.layout.operator(SimpleOperator.bl_idname, text=SimpleOperator.bl_label)
-
-# Register and add to the "object" menu (required to also use F3 search "Simple Object Operator" for quick access)
-def register():
-    bpy.utils.register_class(SimpleOperator)
-    bpy.types.VIEW3D_MT_object.append(menu_func)
-
-
-def unregister():
-    bpy.utils.unregister_class(SimpleOperator)
-    bpy.types.VIEW3D_MT_object.remove(menu_func)
+# RANDOM #
+class randomOps(bpy.types.Operator):
+    """Tooltip"""
+    bl_idname = "scene.random_generator"
+    bl_label = "Random Generator"
+    bl_options = {"REGISTER", "UNDO"}
     
+    # try hard min and hard max, or soft
+    size : IntProperty(
+    name = "Room Size",
+    description = "Room dimensions",
+    default = 5,
+    min = 1
+    )
+
+    space : IntProperty(
+      name = "Whitespace",
+      description = "Amount of open area.",
+      default = 1,
+      min = 0,
+      max = 15
+    )
+
+    def execute(self, context):
+      randomGenerator(self.size, self.space)
+      return {'FINISHED'}
+  
+
+def menu_func1(self, context):
+    self.layout.operator(randomOps.bl_idname, text=randomOps.bl_label)
+
+def register1():
+    bpy.utils.register_class(randomOps)
+    bpy.types.VIEW3D_MT_object.append(menu_func1)
+  
+def menu_func2(self, context):
+    self.layout.operator(WaveFunctionCollapse.bl_idname, text=WaveFunctionCollapse.bl_label)
+
+def register2():
+    bpy.utils.register_class(WaveFunctionCollapse)
+    bpy.types.VIEW3D_MT_object.append(menu_func2)
+
 if __name__ == "__main__":
-    register()
+    if "Tiles" not in bpy.data.collections:
+      collection = bpy.data.collections.new("Tiles")
+      bpy.context.scene.collection.children.link(collection)
+
+    blenderObjects = []
+
+    for i in range(11):
+      blenderObjects.append(bpy.data.collections["Assets"].objects["Tile."+str(i)])
+      bpy.context.view_layer.objects.active = blenderObjects[4]
+    register1()
+    register2()
