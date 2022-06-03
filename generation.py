@@ -14,7 +14,6 @@ bl_info = {
 # Importing the library
 import bpy
 import math
-#from mathutils import *
 import random
 from bpy.props import *
 from bpy.types import (
@@ -114,7 +113,9 @@ def getDirection(x1, y1, x2, y2):
       return "negX"
   return None
   
+# Random Generation Algorithm
 def randomGenerator(roomSize, whiteSpace, offset):
+  # Create Tiles Collection
   if "Tiles" not in bpy.data.collections:
     collection = bpy.data.collections.new("Tiles")
     bpy.context.scene.collection.children.link(collection)
@@ -137,8 +138,9 @@ def randomGenerator(roomSize, whiteSpace, offset):
       cells[x][y].z = offset[2]
       cells[x][y].draw()
 
-# wave function collapse
+# Wave Function Collapse Algorithm
 def waveFunctionCollapseGenerator(roomSize, whiteSpace, offset):
+  # create cell position
   if "Tiles" not in bpy.data.collections:
     collection = bpy.data.collections.new("Tiles")
     bpy.context.scene.collection.children.link(collection)
