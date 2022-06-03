@@ -6,7 +6,7 @@ An addon for Blender that allows users to procedurally create tile based maps. Y
 Download `generation.py`. Open your Blender file, and go to `Edit > Preferences > Addons > Install`. Import `generation.py`.
 
 ### Create Tiles
-This is a very crucial part that can be easily messed up. You will need to create 11 different tiles in a specific order with a specific shape and orientation. You will need to create 4 different tiles, show below. Yellow represents a wall. **Be sure to make your walls half of a normal wall, as the generators will put two tiles together, creating a full wall.** Front means positive Y, back means negative Y, right means position X, left means negative X. Make 1 floor, rename it to `Tile.000`. When you crate a new tile, copy the previous tile. THis will help you later when you have to name the tiles.
+This is a very crucial part that can be easily messed up. You will need to create 11 different tiles in a specific order with a specific shape and orientation. You will need to create 4 different tiles, show below. Yellow represents a wall. **Be sure to make your walls half of a normal wall, as the generators will put two tiles together, creating a full wall.** Front means positive Y, back means negative Y, right means position X, left means negative X. Make 1 floor, rename it to `Tile.000`. When you crate a new tile, copy the previous tile. This will help you later when you have to name the tiles.
 
 **Tiles (in order):**
 - An empty space: <img src="https://lh3.googleusercontent.com/d/1tHOqRCMh4RSiRcEiRpEys_RQuQsqlCcV" align="center" height="30vh">
