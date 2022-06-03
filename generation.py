@@ -14,6 +14,7 @@ bl_info = {
 # Importing the library
 import bpy
 import math
+#from mathutils import *
 import random
 from bpy.props import *
 from bpy.types import (
@@ -113,9 +114,7 @@ def getDirection(x1, y1, x2, y2):
       return "negX"
   return None
   
-# Random Generation Algorithm
 def randomGenerator(roomSize, whiteSpace, offset):
-  # Create Tiles Collection
   if "Tiles" not in bpy.data.collections:
     collection = bpy.data.collections.new("Tiles")
     bpy.context.scene.collection.children.link(collection)
@@ -138,9 +137,8 @@ def randomGenerator(roomSize, whiteSpace, offset):
       cells[x][y].z = offset[2]
       cells[x][y].draw()
 
-# Wave Function Collapse Algorithm
+# wave function collapse
 def waveFunctionCollapseGenerator(roomSize, whiteSpace, offset):
-  # create cell position
   if "Tiles" not in bpy.data.collections:
     collection = bpy.data.collections.new("Tiles")
     bpy.context.scene.collection.children.link(collection)
@@ -181,7 +179,7 @@ class OBJECT_OT_random_generation(Operator):
     
     bl_label = "Random Generation"
     bl_idname = "object.random_generation"
-    bl_description = "Procedurally generates tiles in a random fashion."
+    bl_description = "Procedurally generates tiles in a random fashion"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_options = {"REGISTER", "UNDO"}
@@ -190,22 +188,30 @@ class OBJECT_OT_random_generation(Operator):
         name = "Size",
         default = 5,
         min = 1,
-        description = "Area size of the generation."
+        description = "Area size of the generation"
+    )
+    
+    tSize : FloatProperty(
+        name="Tile Size",
+        default = 2.0,
+        description = "Area of tiles"
     )
     
     space : IntProperty(
         name = "Open Space",
         default = 1,
         min = 0,
-        description = "Amount of open area."
+        description = "Amount of open area"
     )
     
     offset : FloatVectorProperty(
         name = "Generation Offset",
+        description = "Local offset of center of generation",
         default = (0.0, 0.0, 0.0)
     )
 
     def execute(self, context):
+        Cell.size = self.tSize
         randomGenerator(self.size, self.space, self.offset)
         return {"FINISHED"}
     
@@ -229,6 +235,12 @@ class OBJECT_OT_wave_function_collapse(Operator):
         description = "Area size of the generation."
     )
     
+    tSize : FloatProperty(
+        name="Tile Size",
+        default = 2.0,
+        description = "Area of tiles"
+    )
+    
     space : IntProperty(
         name = "Open Space",
         default = 1,
@@ -242,6 +254,7 @@ class OBJECT_OT_wave_function_collapse(Operator):
     )
 
     def execute(self, context):
+        Cell.size = self.tSize
         waveFunctionCollapseGenerator(self.size, self.space, self.offset)
         return {"FINISHED"}
     
