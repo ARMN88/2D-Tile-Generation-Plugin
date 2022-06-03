@@ -1,5 +1,5 @@
 # <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Blender_logo_no_text.svg/939px-Blender_logo_no_text.svg.png" height="30vh"> Blender Tile Generation Addon
-An addon for Blender that allows users to procedurally create tile based maps. You can download the blender file attached, or follow the steps below to create your own setup.
+An addon for Blender that allows users to procedurally create tile based maps. You can download the [blender file](https://github.com/ARMN88/2D-Tile-Generation-Plugin/archive/refs/heads/main.zip) attached, or follow the steps below to create your own setup.
 
 ## How To Use
 ### Import The Addon
