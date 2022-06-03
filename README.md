@@ -21,7 +21,7 @@ This is a very crucial part that can be easily messed up. You will need to creat
 - Two Wall Tile (walls back and right): <img src="https://lh3.googleusercontent.com/d/16HZK_xkDMKSns-Yr7o0awZMX660KORbs" align="center" height="30vh">
 - Two Wall Tile (walls front and right): <img src="https://lh3.googleusercontent.com/d/1N1_CV2IEpuZuim4iy4fKfxQJIJ8oVNWe" align="center" height="30vh">
 
-After creating your tiles, hit `Ctrl + A` and select `Rotation and Scale`. Also be sure the tile is one object (join the meshes of the wall, ceiling, and tile). Now you will name them. Each tile is named `Tile.` with the number after it. For example, the tiles (in order) will go: `Tile.0`, `Tile.1`, `Tile.2`, `Tile.3`, `Tile.4`, `Tile.5`, `Tile.6`, `Tile.7`, `Tile.8`, `Tile.9`, and `Tile.10`.
+After creating your tiles, hit `Ctrl + A` and select `Rotation and Scale`. Also be sure the tile is one object (join the meshes of the wall, ceiling, and tile). Now you will name them. Each tile is named `Tile.` with the number after it. For example, the tiles (in order) will go: `Tile.0`, `Tile.1`, `Tile.2`, `Tile.3`, `Tile.4`, `Tile.5`, `Tile.6`, `Tile.7`, `Tile.8`, `Tile.9`, and `Tile.10`. **Tip: you can hit F2 anywhere in the viewport to rename the active object.**
 
 Lastly, make a new Collection, and name it `Assets`. Put all your tiles in the collection. You're done!
 
